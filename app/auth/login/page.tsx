@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -30,7 +30,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/ui/icons";
 import Image from "next/image";
-import { DEFAULT_AUTH_REDIRECT } from "@/routes";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 // Schema de validación con Zod
 const loginSchema = z.object({
@@ -50,6 +50,12 @@ export default function LoginPage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [callbackUrl, setCallbackUrl] = useState("/");
+
+  useEffect(() => {
+    const url = searchParams?.get("callbackUrl") || "/";
+    setCallbackUrl(url);
+  }, [searchParams]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -61,36 +67,7 @@ export default function LoginPage() {
 
   // Función para manejar el login con credenciales
   const onSubmit = async (values: LoginFormValues) => {
-    setError("");
-
-    startTransition(async () => {
-      try {
-        const result = await signIn("credentials", {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
-
-        if (result?.error) {
-          switch (result.error) {
-            case "CredentialsSignin":
-              setError("Email o contraseña incorrectos");
-              break;
-            case "AccessDenied":
-              setError("Acceso denegado");
-              break;
-            default:
-              setError("Algo salió mal. Intenta de nuevo.");
-          }
-        } else if (result?.ok) {
-          router.push(DEFAULT_AUTH_REDIRECT);
-          router.refresh();
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-        setError("Ocurrió un error inesperado. Intenta de nuevo.");
-      }
-    });
+   
   };
 
   // Función para manejar el login con Google
@@ -99,9 +76,9 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
 
     try {
-      await signIn("google", {
-        DEFAULT_AUTH_REDIRECT,
-      });
+      signIn("google", {
+        callbackUrl: DEFAULT_LOGIN_REDIRECT,
+      })
     } catch (error) {
       console.error("Google sign-in error:", error);
       setError("Error al iniciar sesión con Google");
@@ -221,7 +198,10 @@ export default function LoginPage() {
           <CardFooter className="flex flex-col space-y-2">
             <div className="text-sm text-center text-muted-foreground">
               ¿Olvidaste tu contraseña?{" "}
-              <Link href="#" className="text-primary hover:underline">
+              <Link
+                href="#"
+                className="text-primary hover:underline"
+              >
                 Recupérala aquí
               </Link>
             </div>
