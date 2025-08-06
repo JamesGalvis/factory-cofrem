@@ -1,103 +1,164 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import React, { useState } from "react";
+import { Sidebar } from "@/components/common/sidebar";
+import { Header } from "@/components/common/header";
+import { newsData, quickAccessData } from "@/constants/mock-data";
+import { NewsCard } from "@/components/common/news-card";
+import { HeroSection } from "@/components/common/hero-section";
+import { QuickAccessGrid } from "@/components/common/quick-access-grid";
+import { useCurrentTime } from "@/hooks/use-current-time";
+import { NewsSection } from "@/components/common/news-section";
+import { RightSidebar } from "@/components/common/right-sidebar";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+export default function HomePage() {
+  const [currentUser] = useState({
+    name: "María González",
+    email: "maria.gonzalez@cofrem.gov.co",
+    avatar: "https://www.factoryim.co/maria.jpeg",
+    role: "Analista de RRHH",
+    area: "Recursos Humanos",
+    sede: "Sede Principal",
+  });
+
+  const [activeModule, setActiveModule] = useState("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications] = useState(3);
+  const currentTime = useCurrentTime();
+
+  const sidebarItems = [
+    { id: "dashboard", label: "Inicio", icon: "Home" },
+    { id: "news", label: "Noticias", icon: "Bell" },
+    { id: "directory", label: "Directorio", icon: "Users" },
+    { id: "documents", label: "Documentos", icon: "FileText" },
+    { id: "calendar", label: "Calendario", icon: "Calendar" },
+    { id: "employee", label: "Portal Empleado", icon: "User" },
+    { id: "games", label: "Entretenimiento", icon: "Gamepad2" },
+    { id: "settings", label: "Configuración", icon: "Settings" },
+  ];
+
+  const handleGoogleLogin = () => {
+    alert(
+      "🔐 Autenticación con Google Workspace\n\nIntegración SSO configurada para:\n• Gmail corporativo\n• Google Drive\n• Google Calendar\n• Google Directory"
+    );
+  };
+
+  const renderDashboard = () => (
+    <div className="max-w-7xl mx-auto space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <HeroSection currentUser={currentUser} currentTime={currentTime} />
+          <QuickAccessGrid quickAccessData={quickAccessData} />
+
+          <NewsSection
+            newsData={newsData}
+            onViewAll={() => setActiveModule("news")}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <RightSidebar onPlayGames={() => setActiveModule("games")} />
+      </div>
+    </div>
+  );
+
+  const renderNews = () => (
+    <div className="max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold text-gray-900 mb-8">
+        Portal de Noticias
+      </h2>
+      <div className="space-y-6">
+        {newsData.map((news) => (
+          <NewsCard key={news.id} news={news} />
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderGames = () => (
+    <div className="max-w-6xl mx-auto">
+      <h2 className="text-2xl font-bold text-gray-900 mb-8">
+        Centro de Entretenimiento
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          "Trivia COFREM",
+          "Sopa de Letras",
+          "Memoria",
+          "Encuentra las Diferencias",
+        ].map((game, index) => (
+          <div
+            key={index}
+            className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow"
+          >
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl text-white">🎮</span>
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">{game}</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Jugadores: {Math.floor(Math.random() * 50) + 10}
+              </p>
+              <button className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                Jugar
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderModule = () => {
+    switch (activeModule) {
+      case "dashboard":
+        return renderDashboard();
+      case "news":
+        return renderNews();
+      case "games":
+        return renderGames();
+      default:
+        return (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Módulo en desarrollo</p>
+            <button
+              onClick={() => setActiveModule("dashboard")}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Volver al inicio
+            </button>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentUser={currentUser}
+        sidebarItems={sidebarItems}
+        activeModule={activeModule}
+        onModuleChange={setActiveModule}
+        onGoogleLogin={handleGoogleLogin}
+      />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header
+          onMenuClick={() => setSidebarOpen(true)}
+          notifications={notifications}
+        />
+
+        <main className="flex-1 overflow-x-hidden overflow-y-auto">
+          <div className="p-6">{renderModule()}</div>
+        </main>
+      </div>
+
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 }

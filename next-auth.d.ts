@@ -1,0 +1,16 @@
+import { UserRole } from "@prisma/client"
+import NextAuth, { type DefaultSession } from "next-auth"
+
+// TODO: Extenderlo con el Id del parqueadero al que pertence
+export type ExtendedUser = DefaultSession["user"] & {
+  name: string | null
+  image: string | null
+  phone: string | null
+  parkingLotId: string | null
+}
+
+declare module "next-auth" {
+  interface Session {
+    user: ExtendedUser
+  }
+}
