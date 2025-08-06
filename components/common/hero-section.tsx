@@ -67,31 +67,31 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   };
 
   const slides: Slide[] = [
-    {
-      id: 1,
-      type: "welcome",
-      title: `Bienvenida, ${currentUser.name}`,
-      subtitle: `${currentUser.role} - ${currentUser.area}`,
-      gradient: "from-blue-50 to-indigo-50 border-blue-100",
-      icon: <Clock className="w-6 h-6 text-blue-600" />,
-      image: "/images/banner2.jpg",
-      content: (
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-          <div className="flex items-center">
-            <Clock size={16} className="mr-1" />
-            <span>{formatTime(currentTime)}</span>
-          </div>
-          <div className="flex items-center">
-            <Calendar size={16} className="mr-1" />
-            <span>{formatDate(currentTime)}</span>
-          </div>
-          <div className="flex items-center">
-            <MapPin size={16} className="mr-1" />
-            <span>Pico y placa: 7 y 8</span>
-          </div>
-        </div>
-      ),
-    },
+    // {
+    //   id: 1,
+    //   type: "welcome",
+    //   title: `Bienvenida, ${currentUser.name}`,
+    //   subtitle: `${currentUser.role} - ${currentUser.area}`,
+    //   gradient: "from-blue-50 to-indigo-50 border-blue-100",
+    //   icon: <Clock className="w-6 h-6 text-blue-600" />,
+    //   image: "/images/banner2.jpg",
+    //   content: (
+    //     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+    //       <div className="flex items-center">
+    //         <Clock size={16} className="mr-1" />
+    //         <span>{formatTime(currentTime)}</span>
+    //       </div>
+    //       <div className="flex items-center">
+    //         <Calendar size={16} className="mr-1" />
+    //         <span>{formatDate(currentTime)}</span>
+    //       </div>
+    //       <div className="flex items-center">
+    //         <MapPin size={16} className="mr-1" />
+    //         <span>Pico y placa: 7 y 8</span>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
     {
       id: 2,
       type: "stats",

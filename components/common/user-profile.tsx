@@ -1,21 +1,24 @@
 import React from "react";
-import { User } from "@/types";
+import { currentUser } from "@/lib/auth-user";
+import { useCurrentUser } from "@/hooks/user-current-user";
 
-interface UserProfileProps {
-  user: User;
-  showStatus?: boolean;
-}
+export function UserProfile() {
+  const user = useCurrentUser();
 
-export const UserProfile: React.FC<UserProfileProps> = ({
-  user,
-  showStatus = true,
-}) => (
-  <div className="flex items-center space-x-3">
-    <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full" />
-    <div className="flex-1 min-w-0">
-      <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-      <p className="text-xs text-gray-500 truncate">{user.role}</p>
+  return (
+    <div className="flex items-center space-x-3">
+      <img
+        src={user?.image ?? ""}
+        alt={user?.name ?? "user profile image"}
+        className="w-10 h-10 rounded-full"
+      />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-gray-900 truncate">
+          {user?.name}
+        </p>
+        <p className="text-xs text-gray-500 truncate">Analista de RRHH</p>
+      </div>
+      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
     </div>
-    {showStatus && <div className="w-2 h-2 bg-green-400 rounded-full"></div>}
-  </div>
-);
+  );
+}

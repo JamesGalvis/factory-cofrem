@@ -7,6 +7,8 @@ import * as z from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { toast } from "sonner"; 
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,12 +31,11 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/ui/icons";
-import Image from "next/image";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
-// Schema de validación con Zod
+// Validación con Zod
 const loginSchema = z.object({
-  email: z.email("Ingresa un email válido"),
+  email: z.string().email("Ingresa un email válido"),
   password: z
     .string()
     .min(1, "La contraseña es requerida")
@@ -52,11 +53,6 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const [callbackUrl, setCallbackUrl] = useState("/");
 
-  useEffect(() => {
-    const url = searchParams?.get("callbackUrl") || "/";
-    setCallbackUrl(url);
-  }, [searchParams]);
-
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -65,12 +61,25 @@ export default function LoginPage() {
     },
   });
 
-  // Función para manejar el login con credenciales
+  useEffect(() => {
+    const rawCallbackUrl = searchParams?.get("callbackUrl");
+
+    if (rawCallbackUrl) {
+      const decoded = decodeURIComponent(rawCallbackUrl); // /error?error=AccessDenied
+      const errorMatch = new URLSearchParams(decoded.split("?")[1]).get(
+        "error"
+      );
+
+      if (errorMatch === "AccessDenied") {
+        toast.error("No tienes permisos para acceder a esta sección.");
+      }
+    }
+  }, [searchParams]);
+
   const onSubmit = async (values: LoginFormValues) => {
-   
+    // Aquí va tu lógica de login si decides implementarla con signIn("credentials")
   };
 
-  // Función para manejar el login con Google
   const handleGoogleSignIn = async () => {
     setError("");
     setIsGoogleLoading(true);
@@ -78,7 +87,7 @@ export default function LoginPage() {
     try {
       signIn("google", {
         callbackUrl: DEFAULT_LOGIN_REDIRECT,
-      })
+      });
     } catch (error) {
       console.error("Google sign-in error:", error);
       setError("Error al iniciar sesión con Google");
@@ -101,7 +110,6 @@ export default function LoginPage() {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            {/* Formulario de credenciales */}
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -178,7 +186,7 @@ export default function LoginPage() {
                 </span>
               </div>
             </div>
-            {/* Botón de Google */}
+
             <Button
               variant="outline"
               type="button"
@@ -198,16 +206,14 @@ export default function LoginPage() {
           <CardFooter className="flex flex-col space-y-2">
             <div className="text-sm text-center text-muted-foreground">
               ¿Olvidaste tu contraseña?{" "}
-              <Link
-                href="#"
-                className="text-primary hover:underline"
-              >
+              <Link href="#" className="text-primary hover:underline">
                 Recupérala aquí
               </Link>
             </div>
           </CardFooter>
         </Card>
       </div>
+
       <div className="relative hidden md:flex items-end bg-gray-100 overflow-hidden">
         <Image
           src="/images/banner2.jpg"
@@ -217,16 +223,7 @@ export default function LoginPage() {
           className="z-0"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
-        <div className="relative z-20 text-white px-8 py-24 text-start space-y-6">
-          {/* <h2 className="text-5xl font-extrabold leading-tight">
-            Bienvenido a Cofrem.
-          </h2>
-           <p className="text-lg text-gray-200">
-            Crea una cuenta gratuita y obtén acceso completo a todas las
-            funciones durante 30 días. No se requiere tarjeta de crédito.
-            Confiado por más de 4.000 profesionales.
-          </p> */}
-        </div>
+        <div className="relative z-20 text-white px-8 py-24 text-start space-y-6"></div>
       </div>
     </div>
   );

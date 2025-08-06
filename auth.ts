@@ -8,13 +8,25 @@ import { getUserById } from "@/actions/auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
-    signIn: "/login",
+    signIn: "/auth/login",
     error: "/error",
   },
   callbacks: {
     async signIn({ user, account }) {
+      // Validar dominios permitidos para todos los proveedores
+      const allowedDomains = ["factoryai.io", "factoryim.co"];
+      
+      if (user.email) {
+        const emailDomain = user.email.split("@")[1];
+        if (!allowedDomains.includes(emailDomain)) {
+          return false;
+        }
+      }
+
+      // Para proveedores OAuth (Google, etc.) permitir login directo
       if (account?.provider !== "credentials") return true;
 
+      // Para credentials, verificar que el usuario exista en la base de datos
       const existingUser = await getUserById(user.id);
 
       if (!existingUser) return false;
